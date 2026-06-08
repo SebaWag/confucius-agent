@@ -1,9 +1,10 @@
-"""Layer 1: Mental Models — Canonical Knowledge (ChromaDB + Vector Search).
+"""Layer 1: Mental Models — Canonical Knowledge (ChromaDB HTTP Client).
 
-The highest-priority memory tier. Stores curated, validated knowledge
-that serves as the "source of truth" for the agent.
+Connects to the external ChromaDB service. The highest-priority memory tier.
+Stores curated, validated knowledge as the "source of truth" for the agent.
 """
 
+import os
 import chromadb
 from chromadb.config import Settings as ChromaSettings
 from openai import OpenAI
@@ -11,11 +12,15 @@ from confucius.config import settings
 
 
 class MentalModels:
-    """Canonical knowledge base using vector search for retrieval."""
+    """Canonical knowledge base using ChromaDB HTTP client."""
 
     def __init__(self):
-        self.client = chromadb.PersistentClient(
-            path=settings.chroma_persist_dir,
+        # Connect to external ChromaDB service via HTTP
+        chroma_host = os.getenv("CHROMA_HOST", "localhost")
+        chroma_port = os.getenv("CHROMA_PORT", "8000")
+        self.client = chromadb.HttpClient(
+            host=chroma_host,
+            port=int(chroma_port),
             settings=ChromaSettings(anonymized_telemetry=False),
         )
         self.collection = self.client.get_or_create_collection(
@@ -30,7 +35,7 @@ class MentalModels:
     def add_knowledge(self, content: str, source: str, tags: list[str] = None):
         """Add a piece of canonical knowledge to Mental Models."""
         embedding = self._embed(content)
-        doc_id = f"mm_{hash(content) % 10**9}"
+        doc_id = f"mm_{abs(hash(content)) % 10**9}"
         self.collection.add(
             documents=[content],
             embeddings=[embedding],
@@ -51,13 +56,13 @@ class MentalModels:
         )
 
         items = []
-        if results["documents"]:
+        if results and results.get("documents"):
             for i, doc in enumerate(results["documents"][0]):
-                score = results["distances"][0][i] if results["distances"] else 0
+                score = results["distances"][0][i] if results.get("distances") else 0
                 if score >= settings.mental_models_score_threshold:
                     items.append({
                         "content": doc,
-                        "metadata": results["metadatas"][0][i] if results["metadatas"] else {},
+                        "metadata": results["metadatas"][0][i] if results.get("metadatas") else {},
                         "score": score,
                         "tier": "mental_model",
                     })
@@ -72,5 +77,5 @@ class MentalModels:
             )
             return resp.data[0].embedding
         except Exception:
-            # Fallback: simple embedding placeholder
+            # Fallback: return zero vector (will still work, just less precise)
             return [0.0] * 768

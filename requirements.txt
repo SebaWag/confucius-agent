@@ -8,9 +8,8 @@ pydantic-settings>=2.7.0
 # OpenAI-compatible client
 openai>=1.58.0
 
-# Vector search (Mental Models)
+# ChromaDB HTTP client (connects to external chromadb service)
 chromadb>=0.6.0
-sentence-transformers>=3.3.0
 
 # PostgreSQL (Observations)
 psycopg2-binary>=2.9.10
