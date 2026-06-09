@@ -4,6 +4,22 @@
 
 > *"Not all context is equal."* — Confucius Paper (Meta + Harvard, arXiv:2512.10398)
 
+<div align="center">
+  <a href="https://confucius.wagnersolutionsai.com" target="_blank">
+    <img src="https://img.shields.io/badge/Live%20Demo-🚀-8A2BE2?style=for-the-badge&logo=streamlit" alt="Live Demo">
+  </a>
+  &nbsp;
+  <a href="https://github.com/SebaWag/confucius-agent" target="_blank">
+    <img src="https://img.shields.io/badge/GitHub-Repo-181717?style=for-the-badge&logo=github" alt="GitHub">
+  </a>
+  &nbsp;
+  <a href="https://arxiv.org/abs/2512.10398" target="_blank">
+    <img src="https://img.shields.io/badge/Paper-Confucius%20🏛️-FF6B6B?style=for-the-badge" alt="Paper">
+  </a>
+</div>
+
+---
+
 ---
 
 ## 🏆 Global AI Hackathon Series with Qwen Cloud — Track: MemoryAgent
@@ -17,6 +33,15 @@
 | 📦 **Raw Facts** | 🟢 Lowest | Ephemeral context | Redis + TTL decay | Conversation logs, temporary data |
 
 **Result:** An agent that never contradicts itself, reduces token consumption by up to 60%, and retrieves relevant information in milliseconds.
+
+---
+
+## 🎮 Live Demo
+
+> 🚀 **Try it now without installing anything:**  
+> 👉 **[https://confucius.wagnersolutionsai.com](https://confucius.wagnersolutionsai.com)**
+>
+> Upload documents, chat with the agent, and inspect the 3-tier memory in real time.
 
 ---
 
