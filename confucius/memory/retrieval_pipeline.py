@@ -58,9 +58,18 @@ class RetrievalPipeline:
         for item in results["context"]:
             tier = item.get("tier", "raw_fact")
             weight = TIER_WEIGHTS.get(tier, 0.3)
-            # For observations: use priority_score; for others: use score
-            score = item.get("priority_score") or item.get("score", 0) or 1.0
-            item["rank"] = weight * score
+
+            # Observations ya tienen priority_score (confidence * recency)
+            if "priority_score" in item and item["priority_score"]:
+                score = item["priority_score"]
+            else:
+                # Mental Models y Raw Facts: convertir distancia a similitud
+                # ChromaDB: menor distancia = más similar
+                raw_score = item.get("score", 0) or 0
+                similarity = item.get("similarity", 1.0 - min(raw_score, 1.0))
+                score = similarity
+
+            item["rank"] = weight * max(0, score)
 
         results["context"].sort(key=lambda x: x.get("rank", 0), reverse=True)
         results["context"] = results["context"][:max_total]

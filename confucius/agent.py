@@ -7,6 +7,7 @@ Supports tool calling, multi-turn conversations, and cross-session memory.
 from typing import Optional
 
 from confucius.qwen_client import qwen
+import json
 from confucius.memory.retrieval_pipeline import RetrievalPipeline
 
 
@@ -147,7 +148,6 @@ When answering:
             func_name = tool_call.function.name
             args = tool_call.function.arguments
 
-            import json
             args_dict = json.loads(args)
 
             if func_name == "add_mental_model":

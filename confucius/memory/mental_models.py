@@ -5,6 +5,7 @@ Stores curated, validated knowledge as the "source of truth" for the agent.
 """
 
 import os
+import uuid
 import chromadb
 from chromadb.config import Settings as ChromaSettings
 from openai import OpenAI
@@ -35,7 +36,7 @@ class MentalModels:
     def add_knowledge(self, content: str, source: str, tags: list[str] = None):
         """Add a piece of canonical knowledge to Mental Models."""
         embedding = self._embed(content)
-        doc_id = f"mm_{abs(hash(content)) % 10**9}"
+        doc_id = f"mm_{uuid.uuid4().hex[:16]}"
         self.collection.add(
             documents=[content],
             embeddings=[embedding],
@@ -59,11 +60,14 @@ class MentalModels:
         if results and results.get("documents"):
             for i, doc in enumerate(results["documents"][0]):
                 score = results["distances"][0][i] if results.get("distances") else 0
-                if score >= settings.mental_models_score_threshold:
+                # ChromaDB distances: lower = more similar. Convert to similarity.
+                similarity = 1.0 - min(score, 1.0)
+                if similarity >= settings.mental_models_score_threshold:
                     items.append({
                         "content": doc,
                         "metadata": results["metadatas"][0][i] if results.get("metadatas") else {},
                         "score": score,
+                        "similarity": similarity,
                         "tier": "mental_model",
                     })
         return items

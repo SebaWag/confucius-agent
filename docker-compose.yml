@@ -60,6 +60,8 @@ services:
     environment:
       - REDIS_URL=redis://redis:6379/0
       - POSTGRES_DSN=postgresql://confucius:confucius_secret@postgres:5432/confucius
+      - CHROMA_HOST=chromadb
+      - CHROMA_PORT=8000
       - CHROMA_PERSIST_DIR=/data/chroma
     volumes:
       - demo-data:/data
