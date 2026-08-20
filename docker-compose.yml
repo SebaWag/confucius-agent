@@ -23,7 +23,7 @@ services:
     environment:
       POSTGRES_DB: confucius
       POSTGRES_USER: confucius
-      POSTGRES_PASSWORD: confucius_secret
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5433:5432"
     volumes:
@@ -59,7 +59,7 @@ services:
       - "8502:8501"
     environment:
       - REDIS_URL=redis://redis:6379/0
-      - POSTGRES_DSN=postgresql://confucius:confucius_secret@postgres:5432/confucius
+      - POSTGRES_DSN=postgresql://confucius:${POSTGRES_PASSWORD}@postgres:5432/confucius
       - CHROMA_HOST=chromadb
       - CHROMA_PORT=8000
       - CHROMA_PERSIST_DIR=/data/chroma
